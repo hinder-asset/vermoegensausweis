@@ -1,0 +1,536 @@
+---
+title: ""
+output: 
+  pdf_document:
+    keep_tex: true
+    includes: 
+      in_header: header.sty
+classoption: landscape,a4paper
+documentclass: report
+fontsize: 9pt
+geometry: margin=1in
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tikzDevice)
+library(HAM)
+library(xts)
+library(lubridate)
+
+source("O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/R_Code/evaluation.R")
+load("O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/Kundendata_Rev.RData")
+
+name_mapping<-function(name){
+  
+  a<-classification_table[grep(name, classification_table[,1]),5]
+  if(length(a)==0){
+    return(name)
+  }else{
+    return(a)
+  }
+}
+
+create_pos_entry<-function(pos, last=F, multiple=F, col=F){
+  
+  library(tikzDevice)
+  
+if(multiple){
+    a<-"\\newline"
+    color<-ifelse(col," \\rowcolor{Gray} ", "")
+
+    positions1<-pos
+    pos<-as.vector(pos[1,])
+    for(i in 1:length(pos)){
+        zzzzz<-try(pos[i]<-sanitizeTexString(as.character(pos[i])), silent=T)
+        if(class(zzzzz)=="try-error"){
+        }
+    }
+    b<-try(order_date<-format(as.Date(pos[12]), format="%d.%m.%Y"), silent=T)
+    if(class(b)=="try-error"){
+      order_date<-""
+    }
+    
+    string<-paste(name_mapping(pos[3]),a,"&", pos[2], a, pos[1],a, pos[16], "&", round(as.numeric(pos[7]), digits=2),a, pos[10], "&", order_date, a, ifelse(pos[13]=="V", "Verkauf", ifelse(pos[13]=="K", "Kauf", " ")), "&", paste('CHF ',formatC(as.numeric(pos[8]), big.mark="`", format = 'f', digits=2)), a, paste('CHF',formatC(as.numeric(pos[9]),  big.mark="`", format = 'f', digits=2)), "&", ifelse(grepl("NA",pos[14]), " ", pos[14]), a, ifelse(grepl("NA",pos[15]), " ", pos[15]),"\\\\",  sep=" ")
+    
+for(k in 2:nrow(positions1)){
+
+  pos<-positions1[k,]
+  for(i in 1:length(pos)){
+   zzzzz<-try(pos[i]<-sanitizeTexString(as.character(pos[i])), silent=T)
+            if(class(zzzzz)=="try-error"){
+        }
+  }
+  b<-try(order_date<-format(as.Date(pos[12]), format="%d.%m.%Y"), silent=T)
+  if(class(b)=="try-error"){
+    order_date<-""
+  }
+
+string<-paste(string, color, "&", pos[2], a, pos[1],a, pos[16], "&", round(as.numeric(pos[7]), digits=2),a, pos[10], "&", order_date, a, ifelse(pos[13]=="V", "Verkauf", ifelse(pos[13]=="K", "Kauf", " ")), "&", paste('CHF ',formatC(as.numeric(pos[8]), big.mark="`", format = 'f', digits=2)), a, paste('CHF',formatC(as.numeric(pos[9]),  big.mark="`", format = 'f', digits=2)), "&", ifelse(grepl("NA",pos[14]), " ", pos[14]), a, ifelse(grepl("NA",pos[15]), " ", pos[15]),ifelse(k==nrow(positions1),"\\\\*","\\\\"),  sep=" ")
+
+}
+
+  end=paste(" \\hline ",color, " \\bf{} & Subtotal & ",sum(as.numeric(sub("%", "", positions1[,10])), na.rm = FALSE), "\\%" , " & & ",paste('CHF ',formatC(sum(as.numeric(sub("%", "", positions1[,9])), na.rm = FALSE), big.mark="`", format = 'f', digits=2)) , " & \\\\ \\hline", sep="")
+  string<-paste(string, end, sep="")
+  return(string)  
+    
+}else{  
+  pos<-as.vector(pos)
+  for(i in 1:length(pos)){
+    try(pos[i]<-sanitizeTexString(pos[i]), silent=T)
+  }
+  
+  
+  b<-try(order_date<-format(as.Date(pos[12]), format="%d.%m.%Y"), silent=T)
+  if(class(b)=="try-error"){
+    order_date<-""
+  }
+  
+      a<-"\\newline"
+      return(paste(name_mapping(pos[3]),a,"&", pos[2], a, pos[1],a, pos[16], "&", pos[7],a, pos[10], "&", order_date, a, ifelse(pos[13]=="V", "Verkauf", ifelse(pos[13]=="K", "Kauf", " ")), "&", paste('CHF ',formatC(as.numeric(pos[8]), big.mark="`", format = 'f', digits=2)), a, paste('CHF',formatC(as.numeric(pos[9]),  big.mark="`", format = 'f', digits=2)), "&", ifelse(grepl("NA",pos[14]), " ", pos[14]), a, ifelse(grepl("NA",pos[15]), " ", pos[15]),ifelse(last,"\\\\","\\\\ \\hline"),  sep=" "))
+      
+  }  
+}
+
+
+create_pos_table<-function(pos=positions, name=""){
+
+ start=paste("\\footnotesize \\renewcommand*{\\arraystretch}{1.5}  \\begin{longtable}{L{5.5cm} L{5.5cm} R{2.5cm} R{2.5cm} R{2.5cm} R{3cm}}
+\\normalsize \\bf{", name, "} \\small \\newline  & & & & & \\\\ \\toprule[1pt] \\bf{Anlagekategorie} \\newline \\bf{} & \\bf{Bezeichnung} \\newline \\bf{Code} & \\bf{Anzahl} \\newline \\bf{Anteil Portfolio} & \\bf{Trx-Datum} \\newline \\bf{K/V} & \\bf{Marktkurs} \\newline \\bf{Marktwert} & \\bf{Seit letzter Trx} \\newline \\bf{Seit ", format(as.Date(paste(year(stichtag-60), "01-01", sep="-")), "%d.%m.%Y") ,"} \\\\ \\toprule[1pt] \\endhead ", sep="")
+
+# start="\\begin{tabular}{L{5cm}p{5cm}}  Anlagekategorie & Beschreibung \\\\ a & b"
+ if(length(pos)>0){ 
+ 
+   if(is.vector(pos)){
+       end=paste(" \\bottomrule[1pt] \\textbf{Subtotal} & & \\bf{",sum(as.numeric(sub("%", "", pos[10])), na.rm = FALSE), "}\\%" , " &  & \\bf{", paste('CHF ',formatC(sum(as.numeric(sub("%", "", pos[9], fixed=T)), na.rm = FALSE), big.mark="`", format = 'f', digits=2)) , "} & \\end{longtable}", sep="")
+     
+       
+   }else{
+       end=paste("\\bottomrule[1pt] \\textbf{Subtotal} & & \\bf{",sum(as.numeric(sub("%", "", pos[,10])), na.rm = FALSE), "}\\%" , " &  & \\bf{ ", paste('CHF ',formatC(sum(as.numeric(sub("%", "", pos[,9], fixed=T)), na.rm = FALSE), big.mark="`", format = 'f', digits=2))  , "} & \\end{longtable}", sep="")
+
+   }
+  
+  if(is.vector(pos)){
+      subclasses<-pos[3]
+      multiple<-F
+      p<-pos
+
+  }else{
+
+      subclasses<-unique(as.character(pos[,3]))
+      multiple<-ifelse(is.vector(pos[pos[,3]==subclasses[1],]), F, T)
+      p<-pos[pos[,3]==subclasses[1],]
+  } 
+  aaa<-create_pos_entry(p, last=ifelse(is.vector(pos), T, F), multiple=multiple)     
+if(length(subclasses)>1)
+ for(i in 2:length(subclasses)){
+   if(i %% 2 ==0){
+     aaa<-paste(aaa," \\rowcolor{Gray} ", create_pos_entry(pos[pos[,3]==subclasses[i],], last=ifelse(i==length(subclasses), T, F), multiple=ifelse(is.vector(pos[pos[,3]==subclasses[i],]), F, T), col=T)  , sep=" ")
+   }else{
+     aaa<-paste(aaa, create_pos_entry(pos[pos[,3]==subclasses[i],], last=ifelse(i==length(subclasses), T, F), multiple=ifelse(is.vector(pos[pos[,3]==subclasses[i],]), F, T), col=F)  , sep=" ")
+   }
+  }
+  return(paste(start, aaa, end, sep=" "))
+  
+ }else{
+   return(" ")
+ }  
+}
+
+
+get_assets_by_classf<-function(positions, class){
+
+  if(class=="Sonstige"){
+        bol<-rep(TRUE, nrow(positions))
+          for(i in 1:length(bol)){
+              if(any(toupper(positions[i,"Kategorie"])==toupper(classification_table[,1]))){
+                  bol[i]<-F
+              }
+          }
+  }else{
+  bol<-rep(FALSE, nrow(positions))
+  
+  for(i in 1:length(bol)){
+    if(any(grepl(positions[i,"Kategorie"], classification_table[,1]))){
+      if(classification_table[which(toupper(positions[i,"Kategorie"])==toupper(classification_table[,1])),2]==class){
+        bol[i]<-T
+      }
+    }
+  }
+  }
+  
+  return(positions[bol,])
+}
+
+
+get_user_name<-function(id=NULL){
+  if(is.null(id)){
+    id=Sys.info()["user"]
+  }
+  if(id=="rl"){
+    return("Robert Leitner")
+  }else if (id=="aho"){
+    return("Andreas Homberger")
+  }else if (id=="wb"){
+    return("Werner Bollier")
+  }else if(id=="ah"){
+    return("Alex Hinder")
+  }else if(id=="rst"){
+    return("Ren\\'e Stiefelmeyer")
+  }else if(id=="mp"){
+    return("Michael Porr")
+  }else if(id=="cs"){
+    return("Claudine Sydler")
+  }else{
+    return("Ren\\'e Stiefelmeyer")
+  }
+
+}
+
+get_user_phone<-function(id=NULL){
+   if(is.null(id)){
+    id=Sys.info()["user"]
+  }
+  if(id=="rl"){
+    return("+41 44 208 24 24")
+  }else if (id=="aho"){
+    return("+41 44 208 24 26")
+  }else if (id=="wb"){
+    return("+41 44 208 24 24")
+  }else if(id=="ah"){
+    return("+41 44 208 24 20")
+  }else if(id=="rst"){
+    return("+41 44 208 24 28")
+  }else if(id=="mp"){
+    return("+41 44 208 24 24")
+  }else if(id=="cs"){
+    return("+41 44 208 24 21")
+  }else{
+    return("+41 44 208 24 28")
+  }
+}
+
+get_user_email<-function(id=NULL){
+  if(is.null(id)){
+    id=Sys.info()["user"]
+  }
+  if(id=="rl"){
+    return("robert.leitner@hinder-asset.ch")
+  }else if (id=="aho"){
+    return("andreas.homberger@hinder-asset.ch")
+  }else if (id=="wb"){
+    return("werner.bollier@hinder-asset.ch")
+  }else if(id=="ah"){
+    return("alex.hinder@hinder-asset.ch")
+  }else if(id=="rst"){
+    return("rene.stiefelmeyer@hinder-asset.ch")
+  }else if(id=="mp"){
+    return("michael.porr@hinder-asset.ch")
+  }else if(id=="cs"){
+    return("claudine.sydler@hinder-asset.ch")
+  }else{
+    return("rene.stiefelmeyer@hinder-asset.ch")
+  }
+}
+
+get_asset_class<-function(ticker){
+  if(!exists("input_data")){
+    Source_Table_MasterList<-"O:/Produkte/ETF_Masterliste/ETF_MasterListe.xlsm"
+  input_data <<- openxlsx::read.xlsx(Source_Table_MasterList,sheet="Statics", startRow = 7, colNames=F, rowNames=F)
+  }
+  vec<-rep("", length(ticker))
+  ticks<-toupper(input_data[,1])
+  for(i in 1:length(ticker)){
+    try(vec[i]<-as.character(input_data[grep(toupper(ticker[i]), ticks), 31]), silent=T)
+  }
+  return(vec)
+}
+
+create_trans_table<-function(trans=transactions){
+  
+library(tikzDevice)
+  
+ 
+  if(is.null(trans) || dim(trans)[1]==0){
+    return("\\ Keine Transaktionen vorhanden.")
+  }else{
+
+    header<-" \\footnotesize  \\renewcommand*{\\arraystretch}{1.2} \\begin{longtable}{L{2.6cm} L{4.9cm} L{3.1cm} R{1.2cm} R{1.7cm} R{1.6cm} R{2.6cm} R{2.9cm}} \\hline  \\bf{Datum}& \\bf{Name} & \\bf{Kategorie} & \\bf{Auftrag} & \\bf{Stückzahl} &  \\bf{Währung}  & \\bf{Kurs} & \\bf{Betrag} \\\\ \\toprule[1pt] \\endhead "
+
+
+    b<-" "
+    k=1
+    g<-try(geld<-paste('CHF',formatC(as.numeric(trans[k,7]),  big.mark="`", format = 'f', digits=2)), silent=T)
+    g1<-try(geld1<-paste('CHF',formatC(as.numeric(trans[k,7])*as.numeric(trans[k,4]),  big.mark="`", format = 'f', digits=2)), silent=T)
+    d1<-try(date1<-format(as.Date(trans[k,2]), "%d. %B %Y"), silent=T)
+    # d2<-try(date2<-format(as.Date(trans[k,8]), "%d. %B %Y"), silent=T)
+    
+    yq=as.yearqtr(as.Date(trans[,2]))
+    if(length(unique(yq))==1){
+      s_q<-""
+    }else{
+      s_q<-paste(yq[1], " \\\\ \\hline")
+    }
+    
+    pos<-paste(s_q,ifelse(class(d1)=="try-error", " ", as.character(date1)),"&",trans[k,6], " & ",get_asset_class(trans[k,1]), "&",ifelse(toupper(trans[k,3])=="K", "Kauf", ifelse(toupper(trans[k,3])=="V", "Verkauf", " ")), "&",trans[k,4], "&",trans[k,5], "&",ifelse(class(g)=="try-error", " ",ifelse(geld=="CHF  NA", " ", geld))," & ",   ifelse(class(g1)=="try-error", " ",ifelse(geld1=="CHF  NA", " ", geld1)) , "\\\\",sep=" ")
+    
+    if(nrow(trans)>1){
+      for(k in 2:nrow(trans)){
+    if(is.na(yq[k]) || is.na(yq[k-1]) || yq[k]==yq[k-1]){
+      s_q<-""
+    }else{
+      s_q<-paste("\\end{longtable}  \\footnotesize  \\renewcommand*{\\arraystretch}{1.2} \\begin{longtable}{L{2.6cm} L{4.9cm} L{3.1cm} R{1.2cm} R{1.7cm} R{1.6cm} R{2.6cm} R{2.9cm}} ",yq[k], " \\\\ \\hline")
+    }
+    
+        
+        
+
+            d1<-try(date1<-format(as.Date(trans[k,2]), "%d. %B %Y"), silent=T)
+#             d2<-try(date2<-format(as.Date(trans[k,8]), "%d.%B %Y"), silent=T)
+g<-try(geld<-paste('CHF',formatC(as.numeric(trans[k,7]),  big.mark="`", format = 'f', digits=2)), silent=T)
+
+g1<-try(geld1<-paste('CHF',formatC(as.numeric(trans[k,7])*as.numeric(trans[k,4]),  big.mark="`", format = 'f', digits=2)), silent=T)
+pos<-paste(pos,s_q,ifelse(k%%2==0, " \\rowcolor{Gray} ", ""), ifelse(class(d1)=="try-error", " ", as.character(date1)),"&",
+    trans[k,6], " & ",get_asset_class(trans[k,1]), "&",ifelse(toupper(trans[k,3])=="K", "Kauf", ifelse(toupper(trans[k,3])=="V", "Verkauf", " ")), "&",trans[k,4], "&",trans[k,5], "&",ifelse(class(g)=="try-error", " ",ifelse(geld=="CHF  NA", " ", geld)),"&",    ifelse(class(g1)=="try-error", " ",ifelse(geld1=="CHF  NA", " ", geld1)), "\\\\",sep=" ")
+      }
+    }
+
+    end<-paste(" \\bottomrule[1pt]  \\end{longtable}", sep="")
+  
+  return(paste(header, pos, end, sep=" "))  
+  }
+}
+
+create_currency_table<-function(){
+  
+ head<-" \\footnotesize \\begin{longtable}{L{10cm} R{4.1cm} R{4.1cm} R{4.1cm}}  \\bf{Konto}  & \\bf{Wert Lokalwährung} & \\bf{Kurs} & \\bf{Wert CHF}  \\\\  \\toprule[1pt] "
+
+ mid<-" "
+ for(i in 1:length(cash_positions)){
+   
+   
+   n<-classification_currency[grep(names(cash_positions)[i], classification_currency[,1]), 2]
+   if(length(n)==0){
+     n<-names(cash_positions)[i]
+   }
+   
+   mid<-paste(mid, 
+              n, 
+              " & ", 
+              formatC(cash_positions[i], big.mark="`", format = 'f', digits=2), 
+              " & ",
+              ifelse(i>1,format(wechselkurs[i-1],nsmall=4)," "),
+              " & ",
+              formatC(cash_positions_chf[i], big.mark="`", format = 'f', digits=2),
+              " \\\\ "
+              )
+ }
+
+end<-paste(" \\bottomrule[1pt]  & \\bf{Anteil Portfolio: ", round(sum(cash_positions_chf, na.rm = FALSE)*100/total_chf, digits=2), "\\%} & & \\bf{", paste('CHF ',formatC(as.numeric(cash_ges), big.mark="`", format = 'f', digits=2)), "} \\end{longtable} ", sep="")
+return(paste(head,mid,end))
+
+}
+
+create_termin_table<-function(termin=termingeschaefte){
+   return("Keine ausstehenden Termingeschäfte.")
+#   if(is.null(termingeschaefte) || dim(termingeschaefte)[2]!=10 || dim(termingeschaefte)[1]==0 ||all(termingeschaefte=="") ){
+#     return("Keine ausstehenden Termingeschäfte.")
+#   }else{
+#        head<-"  \\footnotesize \\begin{longtable}{L{5cm} L{5cm} R{4.05cm} R{4.05cm} R{4.05cm}} \\newline \\newline  \\bf{Name} & \\newline \\newline \\bf{Art} & \\newline \\newline \\bf{Nominalwert} & \\newline \\newline  \\bf{Fälligkeit} & \\bf{Einstandswert} \\newline \\bf{Aktuelle Bewertung} \\newline \\bf{Veränderung}  \\  \\toprule[1pt] "
+#       
+# #         USD/CHF & Forward & CHF 10000 &  unbegrenzt & 1.1021 \newline 1.0521 \newline 5.14\% \\ \hline
+# #         EUR/CHF & Swap & CHF 50000 &  12.05.2131 & 1.1021 \newline 1.0521 \newline 5.14\% \\
+#         
+#     end<-" \\bottomrule[1pt] \\end{longtable}"
+#     return("under construction")
+#   }
+}
+
+
+table_to_chart<-function(a,b){
+
+table_head<-"\\footnotesize \\begin{center} \\begin{longtable}{L{4.3cm} L{0.6cm} R{1.5cm} R{1.8cm}}   & & \\bf{Wert} & \\bf{Anteil}  \\\\ \\toprule[1pt] \\endhead"
+table_end<-paste(" \\bottomrule[1pt]  \\bf{Total} & \\bf{CHF} &  \\bf{",  formatC(sum(as.numeric(b)), big.mark="`", format = 'f',  digits=0), "} & \\bf{",
+formatC(round(100*sum(a), digits=2), format = 'f', digits=0),  "\\% }",
+ " \\end{longtable} \\end{center}", sep="")
+
+if(is.null(a)){
+  return(" ")
+}else{
+      if(is.vector(a) || length(a)>0){
+        mid_table<-""
+        for(i in 1:length(a)){
+              mid_table<-paste(mid_table, names(a)[i]," & CHF & ",  formatC(as.numeric(b[i]), big.mark="`", format = 'f', digits=0)   ," & ", formatC(round(100*a[i], digits=2), format = 'f', digits=2),  "\\% \\\\ ", sep="")  
+        }
+        return(paste(table_head, mid_table, table_end, sep=" "))
+      }else{
+        return(" ")
+      }
+}
+}
+
+```
+\thispagestyle{empty}
+
+\begin{figure}
+  \raggedleft
+  \begin{minipage}{6cm}
+  \includegraphics[width=6cm, height=5cm]{logo.png}
+  \\
+  \\
+  Hinder Asset Management AG \\
+  Beethovenstrasse 3 \\
+  8002 Zürich        \\
+    \vspace*{0.8cm}
+  \\
+  Ihr Ansprechpartner\\
+  \vspace*{0.2cm} \\
+  `r get_user_name(id=kundenbetreuer)` \\
+  `r get_user_phone(id=kundenbetreuer)` \\
+  `r get_user_email(id=kundenbetreuer)` \\
+   \vspace*{0.2cm} \\
+ Zürich, `r format(Sys.time(), "%d. %B %Y")`
+
+  \end{minipage}
+\end{figure}
+
+\def\arraystretch{1}
+\begin{bottompar}
+\textbf{\LARGE\textcolor{hblue}{Vermögensausweis}}
+ \vspace*{0.2cm}
+ \newline
+    \begin{tabular}{@{} lr}
+
+      Depot & `r ifelse(!exists("hide_name") || hide_name=="Nein",  sanitizeTexString(as.character(kundeninfo[1,2]))," ")` \\ 
+      Mandatsstrategie & `r sanitizeTexString(as.character(kundeninfo[4,2]))` \\ 
+      Depotbank & `r ifelse(!exists("hide_name") || hide_name=="Nein", as.character(kundeninfo[5,2]), " ")` \\ 
+      Referenzwährung & CHF \\ 
+      Bewertung per & `r format(stichtag, "%d. %B %Y")` \\ 
+       `r ifelse(kundeninfo[8,2]!="", paste("Anmerkung & ", kundeninfo[8,2], " \\\\ ") ," ")`
+    \end{tabular}
+    \small
+    \vspace*{3.2cm}
+\end{bottompar}
+
+
+\newpage
+
+\rhead{\includegraphics[width=3cm]{logo.png}}
+\lhead{\Large Vermögensausweis}
+\lfoot{ \footnotesize{Hinder Asset Management AG, Beethovenstrasse 3, 8002 Zürich \\ Vertrauliche Unterlagen für `r ifelse(!exists("hide_name") || hide_name=="Nein",sanitizeTexString(as.character(kundeninfo[1,2])), " ")`}}
+
+\rfoot{Seite \thepage}
+
+\section{Portfolioübersicht}
+    \begin{tabular}{ p{20.9cm} r }
+      \hline	
+        Nettovermögen per Schlusskurs `r format(stichtag, "%d.%B %Y")`& \\
+        in Schweizer Franken    & CHF `r formatC(round(total_chf, digits=2),big.mark="'", format = 'f', digits=2) ` \\
+      \hline  
+    \end{tabular}
+\def\arraystretch{1}
+\subsection{Zusammensetzung}
+\begin{figure}[h]
+\begin{minipage}[t]{.45\textwidth}
+{\bf Nach Anlageklasse} \\
+  \includegraphics[width=0.99\linewidth]{O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/Allocation.png} \\
+       `r  if(exists("a_abs")){table_to_chart(rev(a), rev(a_abs))} `
+\end{minipage}%
+\begin{minipage}[t]{.45\textwidth}
+  {\bf Währungsallokation} \\
+  \includegraphics[width=0.99\linewidth]{O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/WAllocation.png} \\
+       `r if(exists("wc_abs")){ table_to_chart(rev(wc), rev(wc_abs)) } `
+\end{minipage}
+\end{figure}
+
+\begin{figure}[h]
+\begin{minipage}[t]{.45\textwidth}
+{\bf Aktien nach Regionen} \\
+ `r  if(exists("b_abs")){ " \\includegraphics[width=0.99\\linewidth]{O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/AAllocation.png}\\" }else{"Keine Aktien im Portfolio vorhanden."}`
+  `r  if(exists("b_abs")){table_to_chart(rev(b), rev(b_abs))} `
+\end{minipage}%
+\begin{minipage}[t]{.45\textwidth}
+{\bf Obligationenallokation} \\
+  `r  if(exists("c_abs")){ " \\includegraphics[width=0.99\\linewidth]{O:/11_Personal_Folders/07_Robert_Leitner/16_Reporting/RegionAllocation.png}\\ " }else{"Keine Obligationen im Portfolio vorhanden."}`
+  `r  if(exists("c_abs")){table_to_chart(rev(c), rev(c_abs))} `
+\end{minipage}
+\end{figure}
+
+
+
+\clearpage
+\section{Positionen}
+\subsubsection{Liquidität}
+
+ `r if(exists("cash_positions")){ create_currency_table()} `
+
+ 
+ \subsubsection{Termingeschäfte} 
+ 
+  `r if(exists("termingeschaefte")){create_termin_table()}`
+
+
+ 
+ \newpage
+ \subsection{Anlagen}
+ 
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Geldmarkt"), name="Geldmarkt Fonds")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Obligationen"), name="Obligationen")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Aktien"), name="Aktien")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Immobilien"),name="Immobilien")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Rohstoff-Anlagen"), name="Rohstoff-Anlagen")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Sonstige Fonds"), name="Sonstige Anlagen und Fonds")[1] `
+   `r  create_pos_table(pos=get_assets_by_classf(positions, "Sonstige"), name="Sonstige Anlagen")[1] `
+
+\newpage
+\section{Transaktionen}
+`r create_trans_table(trans=transactions)[1] `
+
+
+\newpage
+\section{Disclaimer und Erklärungen}
+\footnotesize
+
+\begin{tabular}{p{10cm} p{1cm} p{10cm}} \hline
+
+\textbf{Haftung.}  Das vorliegende Dokument dient ausschliesslich zu Informations-zwecken und ersetzt unter keinen Umständen die verbindlichen Unterlagen Ihrer Depotbank. Es stellt vielmehr eine Ergänzung zu den von Ihrer Depotbank be-reitgestellten Unterlagen dar.  Dieses Dokument basiert auf den von Hinder Asset Management AG erhobenen Daten, welche sich auf die vertraglich vereinbarten Rahmenbedingungen (Konten, Depots, Transaktionen) beschränken. Die erhobenen Daten können trotz aller Sorgfalt fehlerhaft und unvollständig sein. Es kann daher zu Abweichungen zu dem tatsächlichen Portfoliobestand  & & kommen. Hinder Asset Management AG gibt keine Gewähr hinsichtlich der Richtigkeit und Vollständigkeit dieses Dokuments.  Es stellt weder ein Angebot noch eine Empfehlung zum Erwerb oder Verkauf von Finanzinstrumenten dar. Die im Dokument ausgewiesenen Positionen unterliegen Bewertungen Dritter. Die verwendeten Bewertungen von Finanzinstrumenten gelten als Richtlinien und sind weder für die Depotbank noch für Hinder Asset Management AG verbindlich.  Hinder Asset Management AG übernimmt keine Haftung für die Richtigkeit der von ihr als zuverlässig betrachteten, dritten Datenquellen. \\ \hline
+
+\textbf{Bewertung und Datenquelle.}  Die Bewertung der einzelnen Positionen basiert auf Tagesschlusskursen, welche von \textit{Bloomberg} bereitgestellt werden.
+Für die Umrechnung der Portfoliobewertung zum Stichtag in die Referenzwährung wurden folgende Wechselkurse verwendet:
+\begin{center}
+\begin{tabular}{lr}
+  EUR/CHF & `r format(wechselkurs[1] , nsmall=4) ` \\
+  USD/CHF & `r format(wechselkurs[2] , nsmall=4) ` \\
+  GBP/CHF & `r format(wechselkurs[3] , nsmall=4)  ` \\
+\end{tabular}
+\end{center}
+\textit{Seit letzter Trx} entspricht der prozentualen Veränderung (inklusive zwischenzeitlich angefallener Bruttodividenden)  im  Vergleich zum letzten Transaktionspreis. 
+\textit{Seit (Datum)} entspricht dabei der Marktentwicklung (inklusive zwischenzeitlich angefallener Bruttodividenden) des Anlagetitels im Zeitraum von (Datum) bis zum Stichtag.
+
+\vspace*{0.1cm}
+\textbf{Transaktionen (Trx).} Die Auflistung der Transaktionen stellt lediglich die von Hinder Asset Management AG getätigten Transaktionen dar. Vom Kunden getätigte Transaktionen, Einlagen und Entnahmen, Dividendenausschüttungen, sowie abgeschlossene Termingeschäfte werden nicht berücksichtigt.
+
+\vspace*{0.1cm}
+\textbf{Transaktionsdatum} Das Transaktionsdatum richtet sich nach dem Datum des Ausführens der Order, wohingegen Valuta dem Datum der Wertstellung entspricht. Massgebend für die Bewertung ist das Transaktionsdatum.
+
+& &
+\textbf{Klassifizierung. } Die Klassifizierung der Finanzinstrumente lautet wie folgt:
+\begin{itemize}
+\item Geldmarktanlagen
+\item Aktien
+\item Obligationen
+\item Immobilien
+\item Rohstoff-Anlagen
+\item Sonstige Anlagen und Fonds
+\end{itemize}
+Die unter den einzelnen Punkten gelisteten Anlagen können von der Klassifizierung Ihrer Depotbank abweichen.
+
+\vspace*{0.1cm}
+\textbf{Währungsallokation.} Die Währungsallokation entspricht dem Nettoexposure des Portfolios in der jeweiligen Währung. Hierbei wird ausschliesslich die im Fokus des Anlageprodukts stehende Währung berücksichtigt. Sollte ein Anlageprodukt verschiedenen Währungen ausgesetzt sein, so wird die Währung mit der relativ stärksten Gewichtung verwendet. Es kann deshalb zu Abweichungen zum tatsächlichen Währungsexposure kommen. Ausstehende Termingeschäfte und Währungsabsicherungen einzelner Finanzinstrumente werden berücksichtigt.
+
+\\ \hline
+
+\end{tabular}
+
+

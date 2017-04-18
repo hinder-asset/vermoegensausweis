@@ -1,0 +1,408 @@
+/* ---------------------------------------------------------------------------- */
+/* SCREEN */
+/* ---------------------------------------------------------------------------- */
+@media screen{
+  #HAMHeader{
+    background-color: #004790;
+    overflow: auto;
+    height: 100px;
+    vertical-align: middle; 
+    min-width: 960px;
+  }
+
+  #HAMLogo {
+    padding: 10px;
+    vertical-align: middle;
+    width: 280px;
+    text-align: left;
+    float: left;
+  }
+
+ img{
+      border: 1;
+      max-width: 100%;
+      height: auto;   
+    }
+    element.style {
+      width: 33.33%;
+    }
+
+  #PageTitle {
+    color:#FFFFFF;
+    text-align: right;
+    vertical-align: middle;
+    float: right;
+    padding: 70px 20px 0 20px;
+  }
+
+  #PageTitle p {
+    font-size: 16px;
+    color: #FFFFFF;
+  }
+
+  #Footer {
+    background-color: #EBEBEB;
+   /* position: fixed;
+    bottom:0;
+    max-width:900px;
+    align: center;
+    margin: 0;
+    padding: 20px;
+    height: 25%;
+    text-align: center;
+    font-size: 9pt;
+    font-face: bold;
+  }
+
+
+
+  #buttonpanel {
+    background-color: #EBEBEB;
+    bottom: 0;
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    font-size: 12pt;
+    font-face: bold;
+  }
+
+
+
+  .container, .navbar, .navbar-default, .navbar-static-top{
+    background-color: #B5CBE9;
+  }
+
+  .container a, .navbar a, .navbar-default a, .navbar-static-top a{
+    color: #6A788B;
+    font-face: bold;
+  }
+
+  .active{
+    background-color: #FFFFFF;
+  }
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+font-family: Georgia, 'Roman', sans-serif;
+}
+
+
+
+body{
+
+font-size: 15px;
+
+}
+
+
+
+
+
+/* Center Navbar Content */
+.navbar-nav{
+    text-align:left;
+    margin: 0 auto;
+    display: table;
+    table-layout: fixed;
+    float:none;
+}
+/* END Center Navbar Content */
+
+
+/* 	Footer 
+	Make the footer take the rest of the screen
+	The trick is just to take another color for html (=footer color) than for body (=content background color)
+*/
+html {
+  position: relative;
+  min-height: 100%;
+  background-color:#f5f5f5;
+}
+
+body {
+  background-color:#ffffff;
+}
+
+#Footer {
+  width: 100%;
+  height: 60px;
+  background-color: #f5f5f5;
+}
+/*	END Footer */
+
+
+h6{ font-size: .85em; margin: 1.5em 0 }
+
+
+
+
+
+.js-irs-0 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-0 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
+background: #004890;
+}
+
+
+.js-irs-1 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-1 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {
+background: #004890;
+}
+
+.js-irs-2 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-2 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-2 .irs-single, .js-irs-2 .irs-bar-edge, .js-irs-2 .irs-bar {
+background: #004890;
+}
+
+.js-irs-3 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-3 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-3 .irs-single, .js-irs-3 .irs-bar-edge, .js-irs-3 .irs-bar {
+background: #004890;
+}
+
+.js-irs-4 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-4 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-4 .irs-single, .js-irs-4 .irs-bar-edge, .js-irs-4 .irs-bar {
+background: #004890;
+}
+
+.js-irs-5 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-5 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-5 .irs-single, .js-irs-5 .irs-bar-edge, .js-irs-5 .irs-bar {
+background: #004890;
+}
+
+.js-irs-6 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-6 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-6 .irs-single, .js-irs-6 .irs-bar-edge, .js-irs-6 .irs-bar {
+background: #004890;
+}
+
+.js-irs-7 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-7 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-7 .irs-single, .js-irs-7 .irs-bar-edge, .js-irs-7 .irs-bar {
+background: #004890;
+}
+
+.js-irs-8 .irs-bar {
+border-top-color: #EA7021;
+border-bottom-color: #EA7021;
+} 
+
+.js-irs-8 .irs-bar-edge {
+border-color: #EA7021;
+}
+
+.js-irs-8 .irs-single, .js-irs-8 .irs-bar-edge, .js-irs-8 .irs-bar {
+background: #EA7021;
+}
+
+.js-irs-9 .irs-bar {
+border-top-color: #EA7021;
+border-bottom-color: #EA7021;
+} 
+
+.js-irs-9 .irs-bar-edge {
+border-color: #EA7021;
+}
+
+.js-irs-9 .irs-single, .js-irs-9 .irs-bar-edge, .js-irs-9 .irs-bar {
+background: #EA7021;
+}
+
+.js-irs-10 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-10 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-10 .irs-single, .js-irs-10 .irs-bar-edge, .js-irs-10 .irs-bar {
+background: #004890;
+}
+
+.js-irs-11 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-11 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-11 .irs-single, .js-irs-11 .irs-bar-edge, .js-irs-11 .irs-bar {
+background: #004890;
+}
+
+.js-irs-12 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-12 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-12 .irs-single, .js-irs-12 .irs-bar-edge, .js-irs-12 .irs-bar {
+background: #004890;
+}
+
+
+
+.js-irs-13 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-13 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-13 .irs-single, .js-irs-13 .irs-bar-edge, .js-irs-13 .irs-bar {
+background: #004890;
+}
+
+
+
+.js-irs-14 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-14 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-14 .irs-single, .js-irs-14 .irs-bar-edge, .js-irs-14 .irs-bar {
+background: #004890;
+}
+
+
+.js-irs-15 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-15 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-15 .irs-single, .js-irs-15 .irs-bar-edge, .js-irs-15 .irs-bar {
+background: #004890;
+}
+
+
+.js-irs-16 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-16 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-16 .irs-single, .js-irs-16 .irs-bar-edge, .js-irs-16 .irs-bar {
+background: #004890;
+}
+
+
+
+
+.js-irs-17 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-17 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-17 .irs-single, .js-irs-17 .irs-bar-edge, .js-irs-17 .irs-bar {
+background: #004890;
+}
+
+.js-irs-18 .irs-bar {
+border-top-color: #004890;
+border-bottom-color: #004890;
+} 
+
+.js-irs-18 .irs-bar-edge {
+border-color: #004890;
+}
+
+.js-irs-18 .irs-single, .js-irs-18 .irs-bar-edge, .js-irs-18 .irs-bar {
+background: #004890;
+}
+

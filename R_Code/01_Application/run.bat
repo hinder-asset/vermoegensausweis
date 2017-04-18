@@ -1,0 +1,1 @@
+"O:\07_Software\01_R\01_R_Programme\R-3.3.0\bin\x64\R.exe" CMD BATCH "O:\11_Personal_Folders\07_Robert_Leitner\16_Reporting\R_Code\01_Application\run.R" "O:\11_Personal_Folders\07_Robert_Leitner\16_Reporting\R_Code\01_Application\Log.Rout"

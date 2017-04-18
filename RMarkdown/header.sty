@@ -1,0 +1,50 @@
+\usepackage{bbm}
+\usepackage{threeparttable}
+\usepackage{booktabs}
+\usepackage{expex}
+\usepackage{lipsum}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{scrextend}
+\usepackage{xcolor}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\usepackage{color, colortbl}
+
+\usepackage[T1]{fontenc}
+\newcommand{\changefont}[3]{\fontfamily{} \fontseries{} \fontshape{} \selectfont}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength\headheight{26pt}
+\rhead{\includegraphics[width=2.5cm]{logo.png}}
+\lhead{\LARGE Vermögensausweis}
+
+
+\newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
+\renewcommand{\contentsname}{Inhaltsverzeichnis}
+\usepackage{uarial}
+\renewcommand{\familydefault}{\sfdefault}
+
+%used for all table backgrounds
+\definecolor{Gray}{gray}{0.95}
+
+%Avoid creation of empty page at beginning:
+\usepackage{atbegshi}
+%\AtBeginDocument{\AtBeginShipoutNext{\AtBeginShipoutDiscard}}
+
+\usepackage{eso-pic}
+\newcommand\BackgroundPic{%
+\put(0,0){%
+\parbox[b][\paperheight]{\paperwidth}{%
+\vfill
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,%
+keepaspectratio]{background.png}%
+\vfill
+}}}
+
+
+\definecolor{hblue}{RGB}{0, 43, 130}
